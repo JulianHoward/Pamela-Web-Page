@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "baseUrl": "src",
+    "paths": {
+      "@components/*": ["components/*"],
+      "@ui/*": ["components/ui/*"],
+      "@ejes/*": ["components/ejes/*"],
+      "@hooks/*": ["hooks/*"],
+      "@services/*": ["services/*"],
+      "@constants/*": ["constants/*"],
+      "@lib/*": ["lib/*"]
+    }
+  },
+  "exclude": ["node_modules", "dist", "build"]
+}
