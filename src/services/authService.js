@@ -1,11 +1,9 @@
-// src/services/authService.js
 import axios from 'axios';
 
 /**
  * Base URL:
- * - En CRA define REACT_APP_API_URL (ej: http://localhost:3000/api)
+ * - En CRA define REACT_APP_API_URL (ej: https://pamela-backend.onrender.com/api)
  * - Fallback a localhost si no está definida.
- * - Evitamos 'process' directo para que no marque no-undef en ESLint del browser.
  */
 const BASE_URL =
   (typeof globalThis !== 'undefined' &&
@@ -21,7 +19,6 @@ const authApi = axios.create({
 /**
  * Inicia sesión con usuario/contraseña.
  * Espera que el backend emita una cookie de sesión (Set-Cookie).
- * @returns {Promise<Object|null>} user
  */
 export async function login(username, password) {
   const { data } = await authApi.post('/auth/login', { username, password });
@@ -41,7 +38,6 @@ export async function logout() {
 
 /**
  * Obtiene el usuario autenticado (si la cookie de sesión es válida).
- * @returns {Promise<Object|null>}
  */
 export async function getCurrentUser() {
   try {

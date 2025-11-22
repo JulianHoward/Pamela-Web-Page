@@ -1,4 +1,3 @@
-// src/services/noticiasService.js
 import { logger } from '../lib/logger';
 import axios from 'axios';
 
@@ -17,7 +16,7 @@ const mapNoticia = (n) => ({
   id: n.id ?? n._id ?? n.uuid ?? String(n.id || n._id || ''),
   titulo: n.titulo ?? n.title ?? '',
   contenido: n.contenido ?? n.descripcion ?? '',
-  imagen: n.imagen ?? n.imagen_url ?? n.imagenUrl ?? null, // ahora frontend usa "imagen"
+  imagen: n.imagen ?? n.imagen_url ?? n.imagenUrl ?? null,
   fecha: n.fecha ?? n.createdAt ?? n.updatedAt ?? null,
 });
 
@@ -25,7 +24,6 @@ const parseList = (data) => (Array.isArray(data) ? data : data?.items ?? []);
 
 // ----------------------- API ---------------------------
 
-/** GET: lista pública de noticias */
 export async function getNoticias() {
   try {
     const { data } = await api.get('/');
@@ -36,7 +34,6 @@ export async function getNoticias() {
   }
 }
 
-/** GET: una noticia por id (público) */
 export async function getNoticiaById(id) {
   try {
     const { data } = await api.get(`/${id}`);
@@ -47,7 +44,6 @@ export async function getNoticiaById(id) {
   }
 }
 
-/** PUT: actualizar noticia. Requiere sesión. */
 export async function updateNoticia(id, payload) {
   try {
     const { data } = await api.put(`/${id}`, payload);
@@ -58,7 +54,6 @@ export async function updateNoticia(id, payload) {
   }
 }
 
-/** DELETE: eliminar noticia. Requiere sesión. */
 export async function deleteNoticia(id) {
   try {
     await api.delete(`/${id}`);
@@ -69,7 +64,6 @@ export async function deleteNoticia(id) {
   }
 }
 
-/** POST: subir imagen de noticia */
 export async function uploadImagenNoticia(id, file) {
   try {
     const formData = new FormData();
@@ -79,23 +73,23 @@ export async function uploadImagenNoticia(id, file) {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
 
-    return mapNoticia(data); // devuelve noticia completa con URL absoluta
+    return mapNoticia(data);
   } catch (err) {
     logger.error('uploadImagenNoticia failed', err);
     throw new Error(err?.response?.data?.message || 'No se pudo subir la imagen.');
   }
 }
-/** POST: crear noticia con imagen opcional (FormData). Requiere sesión. */
+
 export async function createNoticiaWithImage(payload, imagenFile = null) {
   try {
     const formData = new FormData();
     formData.append('titulo', payload.titulo);
     formData.append('contenido', payload.contenido);
     if (imagenFile) {
-      formData.append('imagen', imagenFile);  // Campo clave: "imagen" (coincide con backend)
+      formData.append('imagen', imagenFile);
     }
     const { data } = await api.post('/', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },  // Importante para archivos
+      headers: { 'Content-Type': 'multipart/form-data' },
     });
     return mapNoticia(data);
   } catch (err) {
@@ -103,12 +97,11 @@ export async function createNoticiaWithImage(payload, imagenFile = null) {
     throw new Error(err?.response?.data?.message || 'No se pudo crear la noticia.');
   }
 }
-// Opcional: Modifica createNoticia para usar FormData si hay imagen
+
 export async function createNoticia(payload, imagenFile = null) {
   if (imagenFile) {
     return createNoticiaWithImage(payload, imagenFile);
   }
-  // Si no hay imagen, envía JSON normal
   try {
     const { data } = await api.post('/', payload);
     return mapNoticia(data);
