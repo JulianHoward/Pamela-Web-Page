@@ -1,5 +1,6 @@
 // src/components/MiTrayectoria.jsx
 import { memo, useEffect, useRef, useState } from 'react';
+import { useLanguage } from '../hooks/useLanguage';
 
 // Imágenes en public/assets/trayectoria/
 const slides = [
@@ -17,6 +18,7 @@ const slides = [
 function MiTrayectoria() {
   const trackRef = useRef(null);
   const [active, setActive] = useState(0);
+  const { t } = useLanguage();
 
   const onScroll = () => {
     const el = trackRef.current;
@@ -25,22 +27,21 @@ function MiTrayectoria() {
   };
 
   const goTo = (i) => {
-  const el = trackRef.current;
-  if (!el) return;
+    const el = trackRef.current;
+    if (!el) return;
 
-  // Nuevo índice circular
-  let next;
-  if (i < 0) {
-    next = slides.length - 1; // si es menor a 0, ir al último
-  } else if (i >= slides.length) {
-    next = 0; // si supera el último, ir al primero
-  } else {
-    next = i;
-  }
+    // Nuevo índice circular
+    let next;
+    if (i < 0) {
+      next = slides.length - 1; // si es menor a 0, ir al último
+    } else if (i >= slides.length) {
+      next = 0; // si supera el último, ir al primero
+    } else {
+      next = i;
+    }
 
-  el.scrollTo({ left: next * el.clientWidth, behavior: 'smooth' });
-};
-
+    el.scrollTo({ left: next * el.clientWidth, behavior: 'smooth' });
+  };
 
   useEffect(() => {
     const el = trackRef.current;
@@ -48,6 +49,14 @@ function MiTrayectoria() {
     el.addEventListener('scroll', onScroll, { passive: true });
     return () => el.removeEventListener('scroll', onScroll);
   }, []);
+
+  // Efecto para el slide automático (cada 4 segundos)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      goTo(active + 1);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [active]);
 
   return (
     <section
@@ -87,9 +96,9 @@ function MiTrayectoria() {
                 lineHeight: 1.2,
               }}
             >
-              Mi Trayectoria
+              {t.trayectoria.titulo}
             </h2>
-            <p style={{ margin: '6px 0 0', color: '#6B7280' }}>Un recorrido habitado</p>
+            <p style={{ margin: '6px 0 0', color: '#6B7280' }}>{t.trayectoria.subtitulo}</p>
           </header>
 
           {/* Carrusel */}
@@ -204,15 +213,10 @@ function MiTrayectoria() {
                     color: '#111',
                   }}
                 >
-                  Un recorrido habitado
+                  {t.trayectoria.subtitulo}
                 </h3>
                 <p style={{ margin: 0, color: '#374151', lineHeight: 1.7 }}>
-                  Nací en Sucre, Bolivia, donde crecí entre la danza clásica y las danzas
-                  tradicionales bolivianas y latinoamericanas. A los 15 años, integré el Ballet
-                  Municipal de Sucre, lo que me llevó a bailar profesionalmente en varios países de
-                  América Latina y en Estados Unidos. Desde entonces, la danza se convirtió en mi
-                  profesión y casi todas mis decisiones han estado guiadas por mis deseos de bailar,
-                  transmitir y acompañar.
+                  {t.trayectoria.parrafo1}
                 </p>
               </div>
 
@@ -227,32 +231,14 @@ function MiTrayectoria() {
                 }}
               >
                 <p style={{ margin: 0, fontStyle: 'italic', color: '#111' }}>
-                  “Entonces se abrió un nuevo camino lleno de preguntas… y también surgió una
-                  evidencia: <strong>todxs pueden bailar</strong>.”
+                  {t.trayectoria.cita}
                 </p>
               </div>
 
               <div style={{ color: '#222', fontSize: 18, lineHeight: 1.75 }}>
-                <p>
-                  Fue a los 16 años cuando ocurrió un giro decisivo: participé en un taller de
-                  “psicoballet” en el hospital psiquiátrico y tuve la oportunidad de bailar por
-                  primera vez con personas con diversidad funcional. Esta experiencia tan profunda y
-                  significativa marcó mi forma de vivir la danza.
-                </p>
-                <p>
-                  Entonces se abrió un nuevo camino lleno de preguntas sin respuesta: ¿qué aporta
-                  ese lado caluroso y potencializador de la danza a nuestras vidas? ¿cómo explicar
-                  esas conexiones “extrañas” que se crean mientras bailamos? ¿qué ocurre en el
-                  cuerpo y en la mente cuando el movimiento se transforma en un acto creativo
-                  compartido? Y también surgió una evidencia: todxs pueden bailar, y la danza nos
-                  ofrece mucho más que un simple entretenimiento.
-                </p>
-                <p>
-                  Con esas preguntas y esa certeza, decidí estudiar Psicología, con una perspectiva
-                  de trabajo clínico y también de transformación social. Es un camino que no he
-                  dejado, pues me ayuda a comprender mejor cómo el cuerpo, el movimiento y el
-                  psiquismo se entrelazan en la experiencia humana, individual y colectiva.
-                </p>
+                <p>{t.trayectoria.parrafo2}</p>
+                <p>{t.trayectoria.parrafo3}</p>
+                <p>{t.trayectoria.parrafo4}</p>
 
                 <h3
                   style={{
@@ -263,17 +249,9 @@ function MiTrayectoria() {
                     color: '#111',
                   }}
                 >
-                  De Bolivia a Francia: tejiendo puentes
+                  {t.trayectoria.seccion2}
                 </h3>
-                <p>
-                  Con la curiosidad que siempre me acompaña, un mundo de posibilidades se abrió
-                  frente a mí cuando llegué a Francia. Descubrí que la danza no solo se baila:
-                  también se piensa, se estudia, se lee y, sobre todo, es una fuente inagotable de
-                  experiencias y conocimientos. Poco a poco, fui explorando diferentes facetas de la
-                  danza y comprendí que cada formación o curso alimentaba no solo mi práctica
-                  artística, sino también mi manera de acompañar a los demás a través del
-                  movimiento.
-                </p>
+                <p>{t.trayectoria.parrafo5}</p>
               </div>
             </div>
 
@@ -297,7 +275,7 @@ function MiTrayectoria() {
                     fontFamily: '"Archivo", sans-serif',
                   }}
                 >
-                  Tuve la suerte de poder estudiar:
+                  {t.trayectoria.estudios}
                 </h4>
                 <ul
                   style={{
@@ -307,23 +285,12 @@ function MiTrayectoria() {
                     lineHeight: 1.65,
                   }}
                 >
-                  <li>Diploma Estatal de maestra de danza contemporánea (RIDC)</li>
-                  <li>
-                    Maestría en Arte-terapia con especialidad en Danza-Movimiento-Terapia
-                    (Universidad PRES Sorbonne Paris)
-                  </li>
-                  <li>
-                    Licenciatura en Artes del Espectáculo Coreográfico (Universidad Paris VIII
-                    Saint-Denis)
-                  </li>
-                  <li>
-                    Certificado “La Danza como mediación en la Relación de Ayuda” (Free Dance Song)
-                  </li>
-                  <li>Formación en Danza y terapia del movimiento (Conservatorio de Issy)</li>
-                  <li>
-                    Formaciones cortas en clínica del Autismo, AFCMD/Laban/Kestenberg, Notación
-                    Benesh, Pedagogía, entre otras.
-                  </li>
+                  <li>{t.trayectoria.estudio1}</li>
+                  <li>{t.trayectoria.estudio2}</li>
+                  <li>{t.trayectoria.estudio3}</li>
+                  <li>{t.trayectoria.estudio4}</li>
+                  <li>{t.trayectoria.estudio5}</li>
+                  <li>{t.trayectoria.estudio6}</li>
                 </ul>
               </div>
 
@@ -345,16 +312,13 @@ function MiTrayectoria() {
                     fontFamily: '"Archivo", sans-serif',
                   }}
                 >
-                  Cruces técnicos que me nutren
+                  {t.trayectoria.seccion3}
                 </h4>
                 <p style={{ margin: 0, color: '#374151' }}>
-                  Danza contemporánea, técnica Acogny, danzas afro-diaspóricas, improvisación y
-                  técnicas somáticas. Estos cruces nutren mi danza, mi pedagogía y mi enfoque
-                  terapéutico desde el movimiento.
+                  {t.trayectoria.parrafo6}
                 </p>
                 <p style={{ marginTop: 12, color: '#6B7280', fontSize: 14 }}>
-                  Y este camino no se detiene aquí: sigo aprendiendo de manera continua, asistiendo
-                  a cursos, talleres y encuentros que enriquecen mi práctica.
+                  {t.trayectoria.parrafo7}
                 </p>
               </div>
             </div>

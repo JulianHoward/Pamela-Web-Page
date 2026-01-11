@@ -10,26 +10,26 @@ import {
   Typography,
 } from '@mui/material';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
+import { useLanguage } from '../hooks/useLanguage';
 
-const navItems = [
-  { label: 'INICIO', id: 'home' },
-  { label: 'MI TRAYECTORIA', id: 'trajectory' },
-  { label: 'MIS EJES DE TRABAJO', id: 'axes' },
-  { label: 'NOVEDADES', id: 'news' },
-  { label: 'GALERÍA', id: 'gallery' },
-  { label: 'CONTACTO', id: 'contact' },
+const navItemsConfig = [
+  { key: 'inicio', id: 'home' },
+  { key: 'trayectoria', id: 'trajectory' },
+  { key: 'ejes', id: 'axes' },
+  { key: 'noticias', id: 'news' },
+  { key: 'galeria', id: 'gallery' },
+  { key: 'contacto', id: 'contact' },
 ];
 
 function Header() {
   const barRef = useRef(null);
   const [headerH, setHeaderH] = useState(64);
-  const [lang, setLang] = useState('ES');
   const [active, setActive] = useState('home');
+  const { language, changeLanguage, t } = useLanguage();
 
-  // Mide la altura real del AppBar (preciso y reactivo)
+  // Mantenemos tu ResizeObserver intacto
   useEffect(() => {
     if (!barRef.current || typeof ResizeObserver === 'undefined') return;
-
     const ro = new ResizeObserver((entries) => {
       for (const entry of entries) {
         const h = entry.contentRect?.height ?? entry.target?.clientHeight ?? 64;
@@ -44,7 +44,7 @@ function Header() {
     (id) => {
       const el = document.getElementById(id);
       if (!el) return;
-      const y = el.getBoundingClientRect().top + window.pageYOffset - (headerH + 8); // respiro
+      const y = el.getBoundingClientRect().top + window.pageYOffset - (headerH + 8);
       window.scrollTo({ top: Math.max(y, 0), behavior: 'smooth' });
     },
     [headerH]
@@ -52,23 +52,19 @@ function Header() {
 
   const handleLang = (_, next) => {
     if (!next) return;
-    setLang(next);
-    // i18n.changeLanguage?.(next.toLowerCase());
+    changeLanguage(next);
   };
 
-  // Scroll-spy: detecta sección visible y marca activo
+  // Mantenemos tu Scroll-spy intacto
   useEffect(() => {
-    const ids = navItems.map((n) => n.id);
-
+    const ids = navItemsConfig.map((n) => n.id);
     const getTop = (el) => {
       const rect = el.getBoundingClientRect();
       return window.pageYOffset + rect.top;
     };
-
     const onScroll = () => {
-      const offset = headerH + 24; // activa un poco antes del borde superior
+      const offset = headerH + 24;
       let current = ids[0];
-
       for (const id of ids) {
         const el = document.getElementById(id);
         if (!el) continue;
@@ -78,129 +74,105 @@ function Header() {
       }
       setActive(current);
     };
-
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, [headerH]);
 
   return (
-    <AppBar position="sticky" ref={barRef} sx={{ backgroundColor: '#731425' }}>
+    <AppBar position="sticky" ref={barRef} sx={{ backgroundColor: '#731425', backgroundImage: 'none' }}>
       <Toolbar
-        sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 2 }}
+        sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          gap: { xs: 1, sm: 2 },
+          px: { xs: 1, sm: 2 } // Menos padding en los bordes para ganar espacio
+        }}
       >
-        {/* Marca: P grande | nombre en 3 líneas */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1.5, sm: 2.5 } }}>
-          {/* Inicial grande */}
+        {/* Marca: P grande | nombre en 3 líneas - TU DISEÑO ORIGINAL */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 2.5 }, flexShrink: 0 }}>
           <Typography
             component="span"
             sx={{
               fontFamily: '"Archivo", sans-serif',
               fontWeight: 800,
-              fontSize: { xs: '34px', sm: '44px', md: '54px' },
+              fontSize: { xs: '30px', sm: '44px', md: '54px' }, // Un poco más pequeña en móvil
               lineHeight: 1,
               color: 'white',
             }}
-            aria-label="Logo P"
           >
             P
           </Typography>
 
-          {/* Línea vertical */}
-          <Divider orientation="vertical" flexItem sx={{ bgcolor: 'rgba(255,255,255,0.7)' }} />
+          <Divider orientation="vertical" flexItem sx={{ bgcolor: 'rgba(255,255,255,0.7)', mx: { xs: 0.5, sm: 1 } }} />
 
-          {/* Nombre en 3 líneas */}
           <Box sx={{ display: 'flex', flexDirection: 'column', lineHeight: 1 }}>
-            <Typography
-              component="span"
-              sx={{
-                fontFamily: '"Archivo", sans-serif',
-                fontWeight: 700,
-                fontSize: { xs: '16px', sm: '18px', md: '20px' },
-                color: 'white',
-                letterSpacing: '0.2px',
-              }}
-            >
+            <Typography component="span" sx={{ fontFamily: '"Archivo", sans-serif', fontWeight: 700, fontSize: { xs: '14px', sm: '18px', md: '20px' }, color: 'white' }}>
               Pamela
             </Typography>
-            <Typography
-              component="span"
-              sx={{
-                fontFamily: '"Archivo", sans-serif',
-                fontWeight: 600,
-                fontSize: { xs: '14px', sm: '16px', md: '18px' },
-                color: 'rgba(255,255,255,0.92)',
-              }}
-            >
+            <Typography component="span" sx={{ fontFamily: '"Archivo", sans-serif', fontWeight: 600, fontSize: { xs: '12px', sm: '16px', md: '18px' }, color: 'rgba(255,255,255,0.92)' }}>
               Paniagua
             </Typography>
-            <Typography
-              component="span"
-              sx={{
-                fontFamily: '"Archivo", sans-serif',
-                fontWeight: 600,
-                fontSize: { xs: '14px', sm: '16px', md: '18px' },
-                color: 'rgba(255,255,255,0.92)',
-              }}
-            >
+            <Typography component="span" sx={{ fontFamily: '"Archivo", sans-serif', fontWeight: 600, fontSize: { xs: '12px', sm: '16px', md: '18px' }, color: 'rgba(255,255,255,0.92)' }}>
               Sanchez
             </Typography>
           </Box>
         </Box>
 
-        {/* Navegación + idioma */}
+        {/* Navegación + idioma - AJUSTE RESPONSIVE SIN ICONOS */}
         <Box
-          sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, md: 2 }, flexWrap: 'wrap' }}
+          sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: { xs: 0.5, md: 1.5 }, 
+            flexWrap: 'wrap', 
+            justifyContent: 'flex-end',
+            maxWidth: { xs: '60%', sm: 'none' } // Evita que empuje el nombre
+          }}
         >
-          {navItems.map((item) => (
-            <Button
-              key={item.id}
-              component="a"
-              href={`#${item.id}`}
-              onClick={(e) => {
-                e.preventDefault(); // mantiene el # y usamos scroll suave
-                scrollToId(item.id);
-              }}
-              aria-current={active === item.id ? 'page' : undefined}
-              sx={{
-                color: 'white',
-                fontWeight: 700,
-                letterSpacing: 0.3,
-                px: { xs: 1, md: 1.5 },
-                '&:hover': {
-                  backgroundColor: 'rgba(255,255,255,0.08)',
-                  textDecoration: 'underline',
+          {/* Los botones de navegación se vuelven más pequeños en móvil */}
+          <Box sx={{ display: 'flex', flexWrap: 'nowrap', overflowX: 'auto', '&::-webkit-scrollbar': { display: 'none' } }}>
+            {navItemsConfig.map((item) => (
+              <Button
+                key={item.id}
+                onClick={() => scrollToId(item.id)}
+                sx={{
+                  color: 'white',
+                  fontWeight: 700,
+                  fontSize: { xs: '10px', sm: '13px', md: '14px' }, // Fuente pequeña en móvil
+                  minWidth: 'auto',
+                  px: { xs: 0.8, sm: 1.5 },
+                  whiteSpace: 'nowrap',
+                  textDecoration: active === item.id ? 'underline' : 'none',
                   textUnderlineOffset: '4px',
-                },
-                ...(active === item.id && {
-                  textDecoration: 'underline',
-                  textUnderlineOffset: '6px',
-                }),
-              }}
-            >
-              {item.label}
-            </Button>
-          ))}
+                }}
+              >
+                {t.nav[item.key]}
+              </Button>
+            ))}
+          </Box>
 
-          {/* FR/ESP */}
+          {/* FR/ESP - Diseño ultra compacto para móvil */}
           <ToggleButtonGroup
             exclusive
             size="small"
-            value={lang}
+            value={language}
             onChange={handleLang}
-            aria-label="Selector de idioma"
             sx={{
-              ml: { xs: 0, md: 1 },
+              ml: 0.5,
               bgcolor: 'rgba(255,255,255,0.08)',
               borderRadius: '999px',
+              '& .MuiToggleButton-root': { 
+                color: 'white', 
+                border: 'none', 
+                px: { xs: 1, sm: 1.5 },
+                fontSize: { xs: '10px', sm: '12px' } 
+              }
             }}
           >
-            <ToggleButton value="ES" sx={{ color: 'white', border: 'none' }} aria-label="Español">
-              ESP
-            </ToggleButton>
-            <ToggleButton value="FR" sx={{ color: 'white', border: 'none' }} aria-label="Francés">
-              FR
-            </ToggleButton>
+            <ToggleButton value="ES">ES</ToggleButton>
+            <ToggleButton value="FR">FR</ToggleButton>
           </ToggleButtonGroup>
         </Box>
       </Toolbar>

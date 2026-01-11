@@ -1,8 +1,10 @@
 import { Box, Button, Stack, Typography, Card, CardMedia, CardContent, Grid } from '@mui/material';
 import PropTypes from 'prop-types';
 import { memo, useMemo } from 'react';
+import { useLanguage } from '../hooks/useLanguage';
 
 function NoticiasList({ noticias = [], onEdit, onDelete }) {
+  const { t } = useLanguage();
   // Normalizamos la lista de noticias
   const list = useMemo(() => {
     if (!Array.isArray(noticias)) return [];
@@ -31,10 +33,10 @@ function NoticiasList({ noticias = [], onEdit, onDelete }) {
             fontFamily: '"Archivo", sans-serif'
           }}
         >
-          Novedades
+          {t.noticias.titulo}
         </Typography>
         <Typography variant="body1" sx={{ textAlign: 'center' }}>
-          No hay noticias.
+          {t.noticias.vacio}
         </Typography>
       </Box>
     );
@@ -51,7 +53,7 @@ function NoticiasList({ noticias = [], onEdit, onDelete }) {
           fontFamily: '"Archivo", sans-serif'
         }}
       >
-        Novedades
+        {t.noticias.titulo}
       </Typography>
 
       <Grid container spacing={4}>

@@ -3,7 +3,7 @@
 export const EJE_DATA = Object.freeze({
   // ────────────────────────────── TERAPÉUTICO ──────────────────────────────
   terapeutico: Object.freeze({
-    emoji: '💠',
+    emoji: '',
     titulo: 'Eje Terapéutico',
     descripcion:
       'Danza-Movimiento-Terapia y procesos de acompañamiento sensibles e integrales.',
@@ -44,7 +44,7 @@ export const EJE_DATA = Object.freeze({
 
   // ────────────────────────────── ARTÍSTICO ──────────────────────────────
   artistico: Object.freeze({
-    emoji: '🎭',
+    emoji: '',
     titulo: 'Eje Artístico',
     descripcion: 'Creación, performance y dirección artística con enfoque inclusivo.',
     imagenes: Object.freeze([
@@ -84,7 +84,7 @@ export const EJE_DATA = Object.freeze({
 
   // ────────────────────────────── PEDAGÓGICO / FORMATIVO ──────────────────────────────
   pedagogico: Object.freeze({
-    emoji: '📚',
+    emoji: '',
     titulo: 'Eje Pedagógico',
     descripcion:
       'Clases, formaciones y transmisión en instituciones y comunidad.',

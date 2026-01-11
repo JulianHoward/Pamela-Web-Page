@@ -1,63 +1,74 @@
 // src/components/Inicio.jsx
 import { memo } from 'react';
+import { useLanguage } from '../hooks/useLanguage';
 
-const HEADER_H = 64; // altura del AppBar (el Header compensa el scroll real)
+const HEADER_H = 64;
 
 function Inicio() {
+  const { t } = useLanguage();
+
   return (
     <section
       id="home"
       aria-labelledby="home-title"
       style={{
         backgroundColor: '#F8F4F1',
+        // Usamos min-height para que llene la pantalla, restando el header
         minHeight: `calc(100vh - ${HEADER_H}px)`,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'flex-start',
-        padding: '16px 0 24px',
+        justifyContent: 'center',
+        padding: '20px 20px', 
         margin: 0,
-        // si algún día navegas con #hash, esto ayuda a que el header no tape el título
-        scrollMarginTop: HEADER_H + 8,
+        scrollMarginTop: HEADER_H,
+        boxSizing: 'border-box',
       }}
     >
       <div
         style={{
-          width: 'min(1100px, 92vw)',
+          width: 'min(1100px, 100%)',
           margin: '0 auto',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: 12,
+          gap: 'clamp(16px, 4vw, 24px)', // Espaciado dinámico
         }}
       >
-        {/* FOTO principal */}
-        <img
-          src="/assets/IMG_4303-convertido-de-JPG.webp"
-          alt="Retrato de Pamela Paniagua con manto tradicional"
-          style={{
-            display: 'block',
-            width: '100%',
-            height: 'auto',
-            maxHeight: '60vh',
-            objectFit: 'contain',
-            borderRadius: 12,
-            margin: '12px 0',
-          }}
-          loading="eager"
-          decoding="async"
-          fetchPriority="high"
-          sizes="(max-width: 768px) 92vw, 1100px"
-        />
+        {/* Contenedor de la Imagen */}
+        <div style={{ 
+          width: '100%', 
+          display: 'flex', 
+          justifyContent: 'center',
+          perspective: '1000px' // Sutil efecto de profundidad
+        }}>
+          <img
+            src="/assets/IMG_4303-convertido-de-JPG.webp"
+            alt="Retrato de Pamela Paniagua"
+            style={{
+              display: 'block',
+              width: '100%',
+              maxWidth: '700px',
+              // En móvil (vertical) limitamos más el alto para ver el texto abajo
+              height: 'auto',
+              maxHeight: 'clamp(280px, 45vh, 550px)', 
+              objectFit: 'cover',
+              borderRadius: 24, // Bordes más suaves para mobile
+              boxShadow: '0 20px 40px rgba(115, 20, 37, 0.12)', // Sombra con tono de marca
+              border: '1px solid rgba(255,255,255,0.6)'
+            }}
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
+          />
+        </div>
 
-        {/* TEXTO */}
+        {/* Bloque de Texto */}
         <div
           style={{
-            maxWidth: 900,
-            margin: '0 auto',
+            maxWidth: '800px',
             textAlign: 'center',
-            padding: 'clamp(10px, 2vw, 18px) 0',
-            lineHeight: 1.45,
+            padding: '0 10px',
           }}
         >
           <h1
@@ -65,38 +76,44 @@ function Inicio() {
             style={{
               fontFamily: '"Archivo", sans-serif',
               fontWeight: 800,
-              letterSpacing: '-0.2px',
-              fontSize: 'clamp(24px, 3.6vw, 38px)',
-              margin: '0 0 6px',
+              letterSpacing: '-0.03em',
+              // Tamaño optimizado para impacto en mobile
+              fontSize: 'clamp(28px, 7vw, 48px)',
+              margin: '0 0 8px',
               color: '#111',
+              lineHeight: 1.1,
+              textWrap: 'balance',
             }}
           >
-            Pamela Cecilia Paniagua Sanchez
+            {t.inicio.titulo}
           </h1>
 
           <p
             style={{
               fontFamily: '"Archivo", sans-serif',
-              fontWeight: 600,
-              fontSize: 'clamp(14px, 2vw, 18px)',
-              margin: '0 0 8px',
-              color: '#222',
+              fontWeight: 700,
+              // Un poco más pequeño y sutil en mobile
+              fontSize: 'clamp(14px, 3vw, 18px)',
+              margin: '0 0 16px',
+              color: '#731425', // Color institucional para resaltar cargo/subtítulo
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em',
             }}
           >
-            Artista coreográfica – Pedagoga – Danza-movimiento-Terapeuta
+            {t.inicio.subtitulo}
           </p>
 
           <p
             style={{
-              fontSize: 'clamp(14px, 1.9vw, 18px)',
-              color: '#333',
-              margin: 0,
+              fontSize: 'clamp(16px, 3.5vw, 19px)',
+              color: '#4B5563', // Gris más legible
+              lineHeight: 1.6,
+              margin: '0 auto',
+              maxWidth: '600px',
+              fontWeight: 400,
             }}
           >
-            Franco-boliviana, vivo y trabajo entre Francia y Bolivia, entre tradición y modernidad,
-            entre creación y transmisión. Para mí, la danza es un lenguaje, una fuerza de
-            transformación íntima y colectiva. Se nutre de la experiencia y de las vivencias de cada
-            persona y merece ser accesible a la mayor cantidad de gente posible.
+            {t.inicio.descripcion}
           </p>
         </div>
       </div>

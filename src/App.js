@@ -1,4 +1,5 @@
 // src/App.js
+import { LanguageProvider } from './contexts/LanguageContext';
 import Contacto from './components/Contacto';
 import Header from './components/Header';
 import Inicio from './components/Inicio';
@@ -120,69 +121,67 @@ function App() {
 
   return (
     <Router>
-      <Seo
-        title="Pamela Cecilia Paniagua"
-        description="Artista coreográfica, pedagoga y danza-movimiento-terapeuta."
-      />
+      <LanguageProvider>
+        <Seo title="Pamela Paniagua - Danza y Terapia" description="Pamela Paniagua, Artista coreográfica, Pedagoga, Danza-Movimiento-Terapeuta" />
+        <Header isLoggedIn={isLoggedIn} onLogout={handleLogout} />
 
-      <Header isLoggedIn={isLoggedIn} onLogout={handleLogout} />
+        <Routes>
+            {/* PÁGINA PÚBLICA: todas las secciones */}
+            <Route
+              path="/"
+              element={
+                <>
+                  <Inicio />
+                  <MiTrayectoria />
+                  <MisEjes />
+                  <NoticiasList noticias={noticias} />
+                  <Contacto />
+                </>
+              }
+            />
 
-      <Routes>
-        {/* PÁGINA PÚBLICA: todas las secciones */}
-        <Route
-          path="/"
-          element={
-            <>
-              <Inicio />
-              <MiTrayectoria />
-              <MisEjes />
-              <NoticiasList noticias={noticias} />
-              <Contacto />
-            </>
-          }
-        />
+            {/* Página pública de noticias */}
+            <Route path="/noticias" element={<NoticiasList noticias={noticias} />} />
 
-        {/* Página pública de noticias */}
-        <Route path="/noticias" element={<NoticiasList noticias={noticias} />} />
+            {/* LOGIN */}
+            <Route path="/login" element={<LoginForm onLoginSuccess={handleLoginSuccess} />} />
 
-        {/* LOGIN */}
-        <Route path="/login" element={<LoginForm onLoginSuccess={handleLoginSuccess} />} />
+            {/* ADMIN PROTEGIDO */}
+            <Route
+              path="/admin/noticias"
+              element={
+                <ProtectedRoute isLoggedIn={isLoggedIn}>
+                  <div style={{ margin: '20px' }}>
+                    <h2>Administrar Noticias</h2>
 
-        {/* ADMIN PROTEGIDO */}
-        <Route
-          path="/admin/noticias"
-          element={
-            <ProtectedRoute isLoggedIn={isLoggedIn}>
-              <div style={{ margin: '20px' }}>
-                <h2>Administrar Noticias</h2>
+                    <Button variant="outlined" color="primary" onClick={toggleForm} sx={{ mb: 2 }}>
+                      {isFormVisible ? 'Cerrar formulario' : 'Crear Nueva Noticia'}
+                    </Button>
 
-                <Button variant="outlined" color="primary" onClick={toggleForm} sx={{ mb: 2 }}>
-                  {isFormVisible ? 'Cerrar formulario' : 'Crear Nueva Noticia'}
-                </Button>
-
-                {isFormVisible && (
-                  <div style={{ margin: '10px 0' }}>
-                    {saveError && (
-                      <Alert severity="error" sx={{ mb: 2 }}>
-                        {saveError}
-                      </Alert>
+                    {isFormVisible && (
+                      <div style={{ margin: '10px 0' }}>
+                        {saveError && (
+                          <Alert severity="error" sx={{ mb: 2 }}>
+                            {saveError}
+                          </Alert>
+                        )}
+                        <NoticiaForm noticiaId={editingId} onSave={handleSave} />
+                      </div>
                     )}
-                    <NoticiaForm noticiaId={editingId} onSave={handleSave} />
+
+                    <NoticiasList noticias={noticias} onEdit={handleEdit} onDelete={handleDelete} />
+
+                    <Button variant="text" color="secondary" onClick={handleLogout} sx={{ mt: 2 }}>
+                      Cerrar sesión
+                    </Button>
                   </div>
-                )}
-
-                <NoticiasList noticias={noticias} onEdit={handleEdit} onDelete={handleDelete} />
-
-                <Button variant="text" color="secondary" onClick={handleLogout} sx={{ mt: 2 }}>
-                  Cerrar sesión
-                </Button>
-              </div>
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
-    </Router>
-  );
-}
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </LanguageProvider>
+      </Router>
+    );
+  }
 
 export default App;
