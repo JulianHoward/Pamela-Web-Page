@@ -1,5 +1,5 @@
 // src/contexts/LanguageContext.jsx
-import { createContext, useCallback, useEffect, useMemo, useState } from 'react';
+import { createContext, useCallback, useMemo, useState } from 'react';
 
 export const LanguageContext = createContext();
 
