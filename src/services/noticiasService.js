@@ -2,10 +2,14 @@
 import axios from 'axios';
 import { logger } from '../lib/logger';
 
-const BASE_URL =
-  (typeof globalThis !== 'undefined' &&
-    globalThis?.process?.env?.REACT_APP_API_URL) ||
-  'http://localhost:3000/api';
+// Base URL: usa la variable de entorno REACT_APP_API_URL o el fallback a producción
+const BASE_URL = process.env.REACT_APP_API_URL || 'https://pamela-backend-1.onrender.com/api';
+
+if (!process.env.REACT_APP_API_URL) {
+  console.warn(
+    '⚠️ REACT_APP_API_URL no definida, usando https://pamela-backend-1.onrender.com/api'
+  );
+}
 
 // Instancia para llamadas públicas (GET)
 const publicApi = axios.create({
@@ -16,7 +20,7 @@ const publicApi = axios.create({
 // Esta sí envía cookies de sesión
 const privateApi = axios.create({
   baseURL: `${BASE_URL}/noticias`,
-  withCredentials: true,
+  withCredentials: true, // importante para enviar cookie de sesión
 });
 
 // ----------------------- Helpers -----------------------
