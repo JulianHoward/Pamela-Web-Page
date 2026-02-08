@@ -1,5 +1,5 @@
+// services/noticiasService.js
 import axios from 'axios';
-
 import { logger } from '../lib/logger';
 
 const BASE_URL =
@@ -7,9 +7,16 @@ const BASE_URL =
     globalThis?.process?.env?.REACT_APP_API_URL) ||
   'http://localhost:3000/api';
 
-const api = axios.create({
+// Instancia para llamadas públicas (GET)
+const publicApi = axios.create({
   baseURL: `${BASE_URL}/noticias`,
-  withCredentials: true, // usamos cookie de sesión
+});
+
+// Instancia para llamadas privadas (POST, PUT, DELETE, upload)
+// Esta sí envía cookies de sesión
+const privateApi = axios.create({
+  baseURL: `${BASE_URL}/noticias`,
+  withCredentials: true,
 });
 
 // ----------------------- Helpers -----------------------
@@ -25,9 +32,10 @@ const parseList = (data) => (Array.isArray(data) ? data : data?.items ?? []);
 
 // ----------------------- API ---------------------------
 
+// GET públicas
 export async function getNoticias() {
   try {
-    const { data } = await api.get('/');
+    const { data } = await publicApi.get('/');
     return parseList(data).map(mapNoticia);
   } catch (err) {
     logger.error('getNoticias failed', err);
@@ -37,7 +45,7 @@ export async function getNoticias() {
 
 export async function getNoticiaById(id) {
   try {
-    const { data } = await api.get(`/${id}`);
+    const { data } = await publicApi.get(`/${id}`);
     return mapNoticia(data);
   } catch (err) {
     logger.error('getNoticiaById failed', err);
@@ -45,9 +53,32 @@ export async function getNoticiaById(id) {
   }
 }
 
+// POST, PUT, DELETE privadas (requieren sesión)
+export async function createNoticia(payload, imagenFile = null) {
+  try {
+    if (imagenFile) {
+      const formData = new FormData();
+      formData.append('titulo', payload.titulo);
+      formData.append('contenido', payload.contenido);
+      formData.append('imagen', imagenFile);
+
+      const { data } = await privateApi.post('/', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      return mapNoticia(data);
+    } else {
+      const { data } = await privateApi.post('/', payload);
+      return mapNoticia(data);
+    }
+  } catch (err) {
+    logger.error('createNoticia failed', err);
+    throw new Error(err?.response?.data?.message || 'No se pudo crear la noticia.');
+  }
+}
+
 export async function updateNoticia(id, payload) {
   try {
-    const { data } = await api.put(`/${id}`, payload);
+    const { data } = await privateApi.put(`/${id}`, payload);
     return mapNoticia(data);
   } catch (err) {
     logger.error('updateNoticia failed', err);
@@ -57,7 +88,7 @@ export async function updateNoticia(id, payload) {
 
 export async function deleteNoticia(id) {
   try {
-    await api.delete(`/${id}`);
+    await privateApi.delete(`/${id}`);
     return true;
   } catch (err) {
     logger.error('deleteNoticia failed', err);
@@ -70,44 +101,12 @@ export async function uploadImagenNoticia(id, file) {
     const formData = new FormData();
     formData.append('imagen', file);
 
-    const { data } = await api.post(`/${id}/imagen`, formData, {
+    const { data } = await privateApi.post(`/${id}/imagen`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
-
     return mapNoticia(data);
   } catch (err) {
     logger.error('uploadImagenNoticia failed', err);
     throw new Error(err?.response?.data?.message || 'No se pudo subir la imagen.');
-  }
-}
-
-export async function createNoticiaWithImage(payload, imagenFile = null) {
-  try {
-    const formData = new FormData();
-    formData.append('titulo', payload.titulo);
-    formData.append('contenido', payload.contenido);
-    if (imagenFile) {
-      formData.append('imagen', imagenFile);
-    }
-    const { data } = await api.post('/', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
-    return mapNoticia(data);
-  } catch (err) {
-    logger.error('createNoticiaWithImage failed', err);
-    throw new Error(err?.response?.data?.message || 'No se pudo crear la noticia.');
-  }
-}
-
-export async function createNoticia(payload, imagenFile = null) {
-  if (imagenFile) {
-    return createNoticiaWithImage(payload, imagenFile);
-  }
-  try {
-    const { data } = await api.post('/', payload);
-    return mapNoticia(data);
-  } catch (err) {
-    logger.error('createNoticia failed', err);
-    throw new Error(err?.response?.data?.message || 'No se pudo crear la noticia.');
   }
 }
