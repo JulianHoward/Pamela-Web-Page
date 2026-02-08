@@ -1,14 +1,11 @@
+// src/services/authService.js
 import axios from 'axios';
 
-/**
- * Base URL:
- * - En CRA define REACT_APP_API_URL (ej: https://pamela-backend.onrender.com/api)
- * - Fallback a localhost si no está definida.
- */
-const BASE_URL =
-  (typeof globalThis !== 'undefined' &&
-    globalThis?.process?.env?.REACT_APP_API_URL) ||
-  'http://localhost:3000/api';
+const BASE_URL = process.env.REACT_APP_API_URL || 'https://pamela-backend-1.onrender.com/api';
+
+if (!process.env.REACT_APP_API_URL) {
+  console.warn('⚠️ REACT_APP_API_URL no definida, usando https://pamela-backend-1.onrender.com/api');
+}
 
 // Cliente axios compartido para auth (cookies de sesión)
 const authApi = axios.create({
