@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardContent, CardMedia, Grid,Stack, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, CardMedia, Grid, Stack, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
 import { memo, useMemo } from 'react';
 
@@ -31,7 +31,7 @@ function NoticiasList({ noticias = [], onEdit, onDelete }) {
             fontWeight: 800,
             textAlign: 'center',
             mb: 2,
-            fontFamily: '"Archivo", sans-serif'
+            fontFamily: '"Archivo", sans-serif',
           }}
         >
           {t.noticias.titulo}
@@ -51,7 +51,7 @@ function NoticiasList({ noticias = [], onEdit, onDelete }) {
           fontWeight: 800,
           textAlign: 'center',
           mb: 4,
-          fontFamily: '"Archivo", sans-serif'
+          fontFamily: '"Archivo", sans-serif',
         }}
       >
         {t.noticias.titulo}
@@ -60,14 +60,14 @@ function NoticiasList({ noticias = [], onEdit, onDelete }) {
       <Grid container spacing={4}>
         {list.map((n) => (
           <Grid item xs={12} sm={6} md={4} key={n.id}>
-            <Card sx={{ borderRadius: 2, boxShadow: 4, display: 'flex', flexDirection: 'column', height: '100%' }}>
+            <Card>
               {n.imagen && (
                 <CardMedia
                   component="img"
-                  height="180"
+                  height="300"
                   image={n.imagen}
                   alt={n.titulo}
-                  sx={{ objectFit: 'cover' }}
+                  sx={{ objectFit: 'contain', border: '1px solid red' }}
                 />
               )}
               <CardContent sx={{ flexGrow: 1 }}>
@@ -80,14 +80,24 @@ function NoticiasList({ noticias = [], onEdit, onDelete }) {
                   {n.titulo}
                 </Typography>
                 {n.fecha && (
-                  <Typography variant="caption" color="text.secondary" display="block" textAlign="center" gutterBottom>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    display="block"
+                    textAlign="center"
+                    gutterBottom
+                  >
                     {new Date(n.fecha).toLocaleDateString()}
                   </Typography>
                 )}
-                <Typography variant="body2" sx={{ whiteSpace: 'pre-line', mt: 1.5, textAlign: 'justify' }}>
+                <Typography
+                  variant="body2"
+                  sx={{ whiteSpace: 'pre-line', mt: 1.5, textAlign: 'justify' }}
+                >
                   {n.contenido}
                 </Typography>
               </CardContent>
+
               {(onEdit || onDelete) && (
                 <Stack direction="row" spacing={1} sx={{ p: 2, justifyContent: 'center' }}>
                   {onEdit && (
@@ -125,11 +135,7 @@ NoticiasList.propTypes = {
       title: PropTypes.string,
       contenido: PropTypes.string,
       descripcion: PropTypes.string,
-      fecha: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.number,
-        PropTypes.instanceOf(Date),
-      ]),
+      fecha: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.instanceOf(Date)]),
       createdAt: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
       updatedAt: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
       imagen_url: PropTypes.string,
