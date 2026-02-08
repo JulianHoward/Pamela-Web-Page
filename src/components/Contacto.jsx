@@ -1,5 +1,6 @@
 // src/components/Contacto.jsx
 import { memo } from 'react';
+
 import { useLanguage } from '../hooks/useLanguage';
 
 function Contacto() {

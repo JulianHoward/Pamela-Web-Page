@@ -1,7 +1,8 @@
 // src/components/MisEjes.jsx
 import { memo, useState } from 'react'; // React y hooks primero
-import { useLanguage } from '../hooks/useLanguage';
+
 import { EJE_DATA } from '../constants/ejesData';
+import { useLanguage } from '../hooks/useLanguage';
 import Gallery from './ui/Gallery';
 
 const HEADER_H = 64;

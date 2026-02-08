@@ -1,5 +1,6 @@
-import { logger } from '../lib/logger';
 import axios from 'axios';
+
+import { logger } from '../lib/logger';
 
 const BASE_URL =
   (typeof globalThis !== 'undefined' &&

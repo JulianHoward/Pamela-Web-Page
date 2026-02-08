@@ -1,5 +1,6 @@
 // src/components/MiTrayectoria.jsx
 import { memo, useEffect, useRef, useState } from 'react';
+
 import { useLanguage } from '../hooks/useLanguage';
 
 // Imágenes en public/assets/trayectoria/

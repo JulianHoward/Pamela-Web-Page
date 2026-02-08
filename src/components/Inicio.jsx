@@ -1,5 +1,6 @@
 // src/components/Inicio.jsx
 import { memo } from 'react';
+
 import { useLanguage } from '../hooks/useLanguage';
 
 const HEADER_H = 64;

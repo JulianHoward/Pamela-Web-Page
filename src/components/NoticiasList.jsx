@@ -1,6 +1,7 @@
-import { Box, Button, Stack, Typography, Card, CardMedia, CardContent, Grid } from '@mui/material';
+import { Box, Button, Card, CardContent, CardMedia, Grid,Stack, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
 import { memo, useMemo } from 'react';
+
 import { useLanguage } from '../hooks/useLanguage';
 
 function NoticiasList({ noticias = [], onEdit, onDelete }) {

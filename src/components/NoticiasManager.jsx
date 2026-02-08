@@ -1,10 +1,11 @@
+import { Alert,Box, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { Box, Typography, Alert } from '@mui/material';
-import NoticiaForm from './NoticiaForm';
-import NoticiasList from './NoticiasList';
-import { getNoticias, deleteNoticia } from '../services/noticiasService';
+
 import { logger } from '../lib/logger';
 import { saveNoticia } from '../managers/noticiasManager';
+import { deleteNoticia,getNoticias } from '../services/noticiasService';
+import NoticiaForm from './NoticiaForm';
+import NoticiasList from './NoticiasList';
 
 const NoticiasManager = () => {
   const [noticias, setNoticias] = useState([]);

@@ -10,6 +10,7 @@ import {
   Typography,
 } from '@mui/material';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
+
 import { useLanguage } from '../hooks/useLanguage';
 
 const navItemsConfig = [

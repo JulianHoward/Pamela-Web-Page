@@ -1,6 +1,7 @@
-import { Alert, Box, Button, Stack, TextField, LinearProgress } from '@mui/material';
+import { Alert, Box, Button, LinearProgress,Stack, TextField } from '@mui/material';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
+
 import { getNoticiaById } from '../services/noticiasService';
 
 const NoticiaForm = ({ noticiaId = null, onSave }) => {

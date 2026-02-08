@@ -1,6 +1,7 @@
 // src/components/ui/Gallery.jsx
-import { logger } from './../../lib/logger';
 import { memo, useCallback, useEffect, useState } from 'react';
+
+import { logger } from './../../lib/logger';
 
 const cell = {
   borderRadius: 12,

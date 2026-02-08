@@ -1,7 +1,7 @@
 // src/components/ejes/EjeDetalle.jsx
 import Gallery from '@ui/Gallery';
 import PropTypes from 'prop-types';
-import { memo, useState, useEffect } from 'react';
+import { memo, useEffect,useState } from 'react';
 
 const styles = {
   h3: {

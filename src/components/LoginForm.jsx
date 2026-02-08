@@ -1,10 +1,11 @@
 // src/components/LoginForm.jsx
-import { logger } from '../lib/logger';
 import { Alert, Box, Button, CircularProgress, Stack, TextField, Typography } from '@mui/material';
-import { login } from '../services/authService';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+import { logger } from '../lib/logger';
+import { login } from '../services/authService';
 
 export default function LoginForm({ onLoginSuccess }) {
   const [emailOrUser, setEmailOrUser] = useState('');

@@ -1,5 +1,8 @@
 // src/App.js
-import { LanguageProvider } from './contexts/LanguageContext';
+import { Alert, Button } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+
 import Contacto from './components/Contacto';
 import Header from './components/Header';
 import Inicio from './components/Inicio';
@@ -10,7 +13,7 @@ import NoticiaForm from './components/NoticiaForm';
 import NoticiasList from './components/NoticiasList';
 import ProtectedRoute from './components/ProtectedRoute';
 import Seo from './components/Seo';
-import { Alert, Button } from '@mui/material';
+import { LanguageProvider } from './contexts/LanguageContext';
 import { checkSession } from './services/authService';
 import {
   createNoticia,
@@ -19,8 +22,6 @@ import {
   updateNoticia,
   uploadImagenNoticia,
 } from './services/noticiasService';
-import { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 
 
