@@ -14,6 +14,9 @@ const BASE_URL =
 const authApi = axios.create({
   baseURL: BASE_URL,
   withCredentials: true, // envía/recibe cookie de sesión
+  headers: {
+    'Content-Type': 'application/json', // importante para login cross-site
+  },
 });
 
 /**
@@ -21,7 +24,11 @@ const authApi = axios.create({
  * Espera que el backend emita una cookie de sesión (Set-Cookie).
  */
 export async function login(username, password) {
-  const { data } = await authApi.post('/auth/login', { username, password });
+  const { data } = await authApi.post(
+    '/auth/login',
+    { username, password },
+    { withCredentials: true, headers: { 'Content-Type': 'application/json' } }
+  );
   return data?.user ?? null;
 }
 
@@ -30,7 +37,7 @@ export async function login(username, password) {
  */
 export async function logout() {
   try {
-    await authApi.post('/auth/logout');
+    await authApi.post('/auth/logout', {}, { withCredentials: true });
   } catch {
     // si el backend no tiene /auth/logout, lo ignoramos
   }
@@ -41,7 +48,7 @@ export async function logout() {
  */
 export async function getCurrentUser() {
   try {
-    const { data } = await authApi.get('/auth/me');
+    const { data } = await authApi.get('/auth/me', { withCredentials: true });
     return data?.user ?? null;
   } catch {
     return null;
