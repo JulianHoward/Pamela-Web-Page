@@ -23,8 +23,6 @@ import {
   uploadImagenNoticia,
 } from './services/noticiasService';
 
-
-
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [noticias, setNoticias] = useState([]);
@@ -32,22 +30,8 @@ function App() {
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [saveError, setSaveError] = useState('');
 
-  // Verifica sesión al montar
+  // Carga noticias públicas **siempre**, sin necesidad de login
   useEffect(() => {
-    const verifySession = async () => {
-      try {
-        const user = await checkSession();
-        setIsLoggedIn(!!user);
-      } catch {
-        setIsLoggedIn(false);
-      }
-    };
-    verifySession();
-  }, []);
-
-  // Carga noticias cuando hay sesión activa
-  useEffect(() => {
-    if (!isLoggedIn) return;
     const fetchNoticias = async () => {
       try {
         const data = await getNoticias();
@@ -57,9 +41,13 @@ function App() {
       }
     };
     fetchNoticias();
-  }, [isLoggedIn]);
+  }, []);
 
-  const handleLoginSuccess = () => setIsLoggedIn(true);
+  const handleLoginSuccess = async () => {
+    // Solo checkSession cuando alguien entra a admin
+    const user = await checkSession();
+    setIsLoggedIn(!!user);
+  };
 
   const handleLogout = async () => {
     setIsLoggedIn(false);
@@ -90,99 +78,107 @@ function App() {
   };
 
   const handleSave = async (newNoticia, currentEditingId, imagenFile) => {
-  const idToUse = currentEditingId || editingId;
+    const idToUse = currentEditingId || editingId;
 
-  try {
-    setSaveError('');
+    try {
+      setSaveError('');
 
-    if (idToUse) {
-      // 🟡 Si se está editando una noticia
-      await updateNoticia(idToUse, newNoticia);
-
-      // Si se seleccionó una nueva imagen, actualizarla por separado
-      if (imagenFile) {
-        await uploadImagenNoticia(idToUse, imagenFile);
+      if (idToUse) {
+        // Editando noticia
+        await updateNoticia(idToUse, newNoticia);
+        if (imagenFile) await uploadImagenNoticia(idToUse, imagenFile);
+      } else {
+        // Creando noticia nueva
+        await createNoticia(newNoticia, imagenFile);
       }
-    } else {
-      // 🟢 Si se está creando una nueva noticia
-      await createNoticia(newNoticia, imagenFile);
+
+      const refreshed = await getNoticias();
+      setNoticias(refreshed);
+      setIsFormVisible(false);
+      setEditingId(null);
+    } catch (err) {
+      const msg = err?.response?.data?.message || err?.message || 'Error al guardar la noticia.';
+      setSaveError(msg);
+      throw err;
     }
-
-    const refreshed = await getNoticias();
-    setNoticias(refreshed);
-    setIsFormVisible(false);
-    setEditingId(null);
-  } catch (err) {
-    const msg = err?.response?.data?.message || err?.message || 'Error al guardar la noticia.';
-    setSaveError(msg);
-    throw err;
-  }
-};
-
+  };
 
   return (
     <Router>
       <LanguageProvider>
-        <Seo title="Pamela Paniagua - Danza y Terapia" description="Pamela Paniagua, Artista coreográfica, Pedagoga, Danza-Movimiento-Terapeuta" />
+        <Seo
+          title="Pamela Paniagua - Danza y Terapia"
+          description="Pamela Paniagua, Artista coreográfica, Pedagoga, Danza-Movimiento-Terapeuta"
+        />
         <Header isLoggedIn={isLoggedIn} onLogout={handleLogout} />
 
         <Routes>
-            {/* PÁGINA PÚBLICA: todas las secciones */}
-            <Route
-              path="/"
-              element={
-                <>
-                  <Inicio />
-                  <MiTrayectoria />
-                  <MisEjes />
-                  <NoticiasList noticias={noticias} />
-                  <Contacto />
-                </>
-              }
-            />
+          {/* PÁGINA PÚBLICA: todas las secciones */}
+          <Route
+            path="/"
+            element={
+              <>
+                <Inicio />
+                <MiTrayectoria />
+                <MisEjes />
+                <NoticiasList noticias={noticias} />
+                <Contacto />
+              </>
+            }
+          />
 
-            {/* Página pública de noticias */}
-            <Route path="/noticias" element={<NoticiasList noticias={noticias} />} />
+          {/* Página pública de noticias */}
+          <Route path="/noticias" element={<NoticiasList noticias={noticias} />} />
 
-            {/* LOGIN */}
-            <Route path="/login" element={<LoginForm onLoginSuccess={handleLoginSuccess} />} />
+          {/* LOGIN */}
+          <Route path="/login" element={<LoginForm onLoginSuccess={handleLoginSuccess} />} />
 
-            {/* ADMIN PROTEGIDO */}
-            <Route
-              path="/admin/noticias"
-              element={
-                <ProtectedRoute isLoggedIn={isLoggedIn}>
-                  <div style={{ margin: '20px' }}>
-                    <h2>Administrar Noticias</h2>
+          {/* ADMIN PROTEGIDO */}
+          <Route
+            path="/admin/noticias"
+            element={
+              <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <div style={{ margin: '20px' }}>
+                  <h2>Administrar Noticias</h2>
 
-                    <Button variant="outlined" color="primary" onClick={toggleForm} sx={{ mb: 2 }}>
-                      {isFormVisible ? 'Cerrar formulario' : 'Crear Nueva Noticia'}
-                    </Button>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={toggleForm}
+                    sx={{ mb: 2 }}
+                  >
+                    {isFormVisible ? 'Cerrar formulario' : 'Crear Nueva Noticia'}
+                  </Button>
 
-                    {isFormVisible && (
-                      <div style={{ margin: '10px 0' }}>
-                        {saveError && (
-                          <Alert severity="error" sx={{ mb: 2 }}>
-                            {saveError}
-                          </Alert>
-                        )}
-                        <NoticiaForm noticiaId={editingId} onSave={handleSave} />
-                      </div>
-                    )}
+                  {isFormVisible && (
+                    <div style={{ margin: '10px 0' }}>
+                      {saveError && (
+                        <Alert severity="error" sx={{ mb: 2 }}>
+                          {saveError}
+                        </Alert>
+                      )}
+                      <NoticiaForm noticiaId={editingId} onSave={handleSave} />
+                    </div>
+                  )}
 
-                    <NoticiasList noticias={noticias} onEdit={handleEdit} onDelete={handleDelete} />
+                  <NoticiasList noticias={noticias} onEdit={handleEdit} onDelete={handleDelete} />
 
-                    <Button variant="text" color="secondary" onClick={handleLogout} sx={{ mt: 2 }}>
-                      Cerrar sesión
-                    </Button>
-                  </div>
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
-        </LanguageProvider>
-      </Router>
-    );
-  }
+                  <Button
+                    variant="text"
+                    color="secondary"
+                    onClick={handleLogout}
+                    sx={{ mt: 2 }}
+                  >
+                    Cerrar sesión
+                  </Button>
+                </div>
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </LanguageProvider>
+    </Router>
+  );
+}
 
 export default App;
