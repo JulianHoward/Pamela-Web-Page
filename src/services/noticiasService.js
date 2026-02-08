@@ -1,8 +1,7 @@
-// services/noticiasService.js
 import axios from 'axios';
 import { logger } from '../lib/logger';
 
-// Base URL: usa la variable de entorno REACT_APP_API_URL o el fallback a producción
+// Base URL: usa la variable de entorno REACT_APP_API_URL o fallback
 const BASE_URL = process.env.REACT_APP_API_URL || 'https://pamela-backend-1.onrender.com/api';
 
 if (!process.env.REACT_APP_API_URL) {
@@ -17,10 +16,9 @@ const publicApi = axios.create({
 });
 
 // Instancia para llamadas privadas (POST, PUT, DELETE, upload)
-// Esta sí envía cookies de sesión
 const privateApi = axios.create({
   baseURL: `${BASE_URL}/noticias`,
-  withCredentials: true, // importante para enviar cookie de sesión
+  withCredentials: true,
 });
 
 // ----------------------- Helpers -----------------------
@@ -28,7 +26,12 @@ const mapNoticia = (n) => ({
   id: n.id ?? n._id ?? n.uuid ?? String(n.id || n._id || ''),
   titulo: n.titulo ?? n.title ?? '',
   contenido: n.contenido ?? n.descripcion ?? '',
-  imagen: n.imagen ?? n.imagen_url ?? n.imagenUrl ?? null,
+  // 🔹 Aquí preparamos la URL completa para la imagen
+  imagen: n.imagen?.startsWith('http') 
+    ? n.imagen 
+    : n.imagen 
+      ? `${BASE_URL}/images/noticias/${n.imagen}` 
+      : null,
   fecha: n.fecha ?? n.createdAt ?? n.updatedAt ?? null,
 });
 
